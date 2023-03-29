@@ -2,7 +2,6 @@ package com.ranjan.niumpay_jetpack.model
 
 import androidx.annotation.DrawableRes
 import com.ranjan.niumpay_jetpack.R
-import java.util.*
 
 data class UserCard(
     val cardHashId: Long,
