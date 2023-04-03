@@ -7,6 +7,7 @@ data class TransactionItem(
     val transactionCategory: String,
     val merchantName: String,
     val time: String,
-    val status: String
+    val status: String,
+    val transactionDate: String
 )
 
