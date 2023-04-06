@@ -2,7 +2,6 @@ package com.ranjan.niumpay_jetpack
 
 import android.app.Activity
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -28,6 +27,8 @@ import com.ranjan.niumpay_jetpack.ui.theme.NIUMPayJetpackTheme
 import com.ranjan.niumpay_jetpack.ui.theme.regalBlue
 import com.ranjan.niumpay_jetpack.ui.theme.waterBlue
 import com.ranjan.niumpay_jetpack.ui.views.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class MainActivity : ComponentActivity() {
@@ -63,9 +64,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        val str: String? = null
-        Log.d("TAG", "onCreate: $str")
-
     }
 }
 
@@ -73,17 +71,19 @@ class MainActivity : ComponentActivity() {
 fun HomeUI(
     cardList: ArrayList<UserCard>, transactionList: ArrayList<TransactionItem>
 ) {
+    val refreshCoroutineScope = rememberCoroutineScope()
     var isRefreshing by remember { mutableStateOf(false) }
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
-//    SwipeRefresh(
-//        state = swipeRefreshState, onRefresh = {
-//            isRefreshing = true
-//        }, modifier = Modifier.fillMaxSize()
-//    ) {
-//    Box(modifier = Modifier) {
-        Column(
-            modifier = Modifier.fillMaxSize(0.5f)
-        ) {
+    SwipeRefresh(
+        state = swipeRefreshState, onRefresh = {
+            refreshCoroutineScope.launch {
+                isRefreshing = true
+                delay(2000L)
+                isRefreshing = false
+            }
+        }, modifier = Modifier.fillMaxSize()
+    ) {
+        Column {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -117,6 +117,6 @@ fun HomeUI(
             }
         }
     }
-//}
+}
 
 

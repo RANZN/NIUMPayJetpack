@@ -11,6 +11,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -141,6 +143,29 @@ fun CardItem(card: UserCard) {
 
 
 @Composable
+fun CurrenciesUI(balance: Double, currencyType: String) {
+    Row(
+        modifier = Modifier
+            .padding(16.dp)
+            .clip(
+                RoundedCornerShape(
+                    10.dp
+                )
+            )
+            .background(Color.White)
+    ) {
+        Icon(painterResource(id = R.drawable.ic_wallet), "wallet")
+        Column {
+            Text(text = "$ $balance", fontWeight = FontWeight.Bold)
+            Text(text = currencyType)
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        Icon(Icons.Default.ArrowDropDown, contentDescription = "ArrowDropDown")
+
+    }
+}
+
+@Composable
 fun EmptyCardItem() {
     Card(
         shape = RoundedCornerShape(14.dp),
@@ -211,16 +236,19 @@ fun QuickActionsUI() {
 
 @Composable
 fun QuickActionIcons(
-    @DrawableRes iconId: Int, contentDescription: String, onClickListener: (() -> Unit)? = null
+    @DrawableRes iconId: Int,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    onClickListener: (() -> Unit)? = null,
 ) {
-    val iconModifier = Modifier
-        .size(41.60.dp)
+    val iconModifier = modifier
+        .size(42.dp)
         .clip(CircleShape)
         .clickable {
             onClickListener?.invoke()
         }
         .background(color = birdFlower)
-        .padding(7.80.dp)
+        .padding(8.dp)
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
         Icon(
@@ -262,21 +290,22 @@ fun TransactionsUI(transactionList: ArrayList<TransactionItem>) {
             verticalArrangement = Arrangement.spacedBy(10.dp),
             contentPadding = PaddingValues(vertical = 10.dp)
         ) {
-            transactionList.groupBy { it.transactionDate }.forEach { (date, transactionItem) ->
-                stickyHeader {
-                    Text(
-                        text = date,
-                        style = MaterialTheme.typography.h6,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(color = MaterialTheme.colors.background)
-                    )
+            transactionList.groupBy { it.transactionDate }.toSortedMap(Comparator.reverseOrder())
+                .forEach { (date, transactionItem) ->
+                    stickyHeader {
+                        Text(
+                            text = date,
+                            style = MaterialTheme.typography.h6,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(color = MaterialTheme.colors.background)
+                        )
+                    }
+                    items(items = transactionItem) { item ->
+                        TransactionItemUI(transaction = item)
+                        Divider()
+                    }
                 }
-                items(items = transactionItem) { item ->
-                    TransactionItemUI(transaction = item)
-                    Divider()
-                }
-            }
         }
     }
 }
@@ -307,6 +336,7 @@ fun CardItemPreview() {
 //        TransactionItemUI(transactionItem)
 //        QuickActionsUI()
 //        ActionIcons(Icons.Outlined.AccountBox, contentDescription = "hello")
+        CurrenciesUI(143.32, "USD - United States Dollar")
     }
 }
 
